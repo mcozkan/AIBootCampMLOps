@@ -6,9 +6,8 @@ import mlflow
 
 def main():
     with mlflow.start_run(run_name = "download_dataset"):
-        print("=== 1. ADIM: VERİ İNDİRME ===")
+        print("=== 1. STEP : LOAD DATA ===")
         print("""Story of Dataset:
-        Story of the DataSet:
 
 Nowadays, network systems play a critical role in all areas, from banking to education, and from healthcare to government institutions. However, these systems have become more vulnerable to cyberattacks than ever before. As a result, intrusion detection has become one of the most important components of cybersecurity.
 
