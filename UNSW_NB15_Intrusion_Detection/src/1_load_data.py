@@ -4,7 +4,7 @@ import os
 import shutil
 import mlflow
 
-def main():
+def load_data():
     with mlflow.start_run(run_name = "download_dataset"):
         print("=== 1. STEP : LOAD DATA ===")
         print("""Story of Dataset:
@@ -80,4 +80,4 @@ To create realistic network traffic, both normal user behaviors and cyberattacks
 
 
 if __name__ == "__main__":
-    main()
+    load_data()
