@@ -1,0 +1,72 @@
+from sklearn.cluster import DBSCAN
+import importlib
+import mlflow
+import matplotlib.pyplot as plt
+
+
+def modeling_data_dbscan():
+    with mlflow.start_run(run_name = "modeling_data_dbscan"):
+        start_func = datetime.datetime.now()
+        # DBSCAN
+        preprocess = importlib.import_module('2_preprocess_data')
+        X_scaled = preprocess.X_scaled
+
+
+        from sklearn.neighbors import NearestNeighbors
+
+        neighbors = NearestNeighbors(n_neighbors=5)
+        neighbors_fit = neighbors.fit(X_scaled)
+        distances, indices = neighbors_fit.kneighbors(X_scaled)
+
+        # Nearest Neigbor distance :
+        distances = np.sort(distances[:,4])
+        plt.plot(distances)
+        plt.title("DBSCAN için eps tahmini (dirsek noktası)")
+        plt.xlabel("Data Point")
+        plt.ylabel("4. NN Distance")
+
+        # Visualization :
+        plt.savefig("eps_estimation_plot.png") # save the figure
+        mlflow.log_artifact("eps_estimation_plot.png") # then log it to the mlflow
+        plt.close() # clean the memory
+
+        # model fit_predict
+        dbscan = DBSCAN(eps=1.5, min_samples=5)
+        db_preds = (dbscan.fit_predict(X_scaled) == -1).astype(int)
+
+        # Model Save
+        models_dir = 'models'
+        os.makedirs(models_dir, exist_ok = True)
+
+        with open(f'{models_dir}/dbscan_model.pkl', 'wb') as f:
+            pickle.dumb(dbscan, f)
+
+        mflows.log_artifact(f'{models_dir}/dbscan_model.pkl')
+
+
+        ########### MLflow main#########
+
+        # hyperparameters :
+        mlflow.log_param('eps_value', 1.5)
+        mlflow.log_param('min_samples', 5)
+
+        # metrics:
+        mlflow.log_metric('n_outliers', int(db_preds.sum())
+        mlflow.log_metric('outlier_percentage', db_preds.mean() * 100)
+
+        # model:
+        mlflow.sklearn.log_model(dbscan, "dbscan_model")
+        mlflow.sklearn.log_model(neighbors_fit, "nearest_neighbors_model")
+
+        # Execution time:
+        end_func = datetime.datetime.now()
+        mlflow.log_metric("execution_time_seconds_dbscan_model", duration)
+
+        print(f"✅ Model çalışma süresi: {duration:.2f} saniye")
+        print(f"✅ Tespit edilen outlier sayısı: {db_preds.sum()}")
+        print(f"✅ Modeller kaydedildi: {models_dir}/")
+
+        return db_preds
+
+    if __name__=="__main__":
+        modeling_data_dbscan()

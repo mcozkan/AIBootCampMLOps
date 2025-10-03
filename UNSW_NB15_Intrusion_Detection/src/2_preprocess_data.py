@@ -5,12 +5,12 @@ import seaborn as sns
 import mlflow
 import shutil
 import os
-
-
+import datetime
 
 
 
 def preprocess_data():
+    start_func = datetime.datetime.now()
     with mlflow.start_run(run_name = "preprocess_data"):
         print("=== 2. STEP : PREPROCESS DATA ===")
 
@@ -74,8 +74,19 @@ def preprocess_data():
         return X, y
 
 
+        from sklearn.preprocessing import StandardScaler
+
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+        
+        end_func = datetime.datetime.now()
+
+        duration = end_func - start_func
+        mlflow.log_metric("execution_time_seconds", duration)
+        print(f"Model çalışma süresi: {duration:.2f} saniye")
 
 if __name__ == "__main__":
     mlflow.set_experiment("UNSW_NB15_Experiment")
     X, y = preprocess_data()
     print(f"\nFinal shapes - X: {X.shape}, y: {y.shape}")
+    
