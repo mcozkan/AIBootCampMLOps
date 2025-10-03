@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/etmco/AIBootCampMLOps/UNSW_NB15_Intrusion_Detection/mlruns/631436229884557408/06bd258658b14ad59ff82e34dd8cc5a5/artifacts
+end_time: 1759503808093
+entry_point_name: ''
+experiment_id: '631436229884557408'
+lifecycle_stage: active
+run_id: 06bd258658b14ad59ff82e34dd8cc5a5
+run_name: preprocess_data
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759503807797
+status: 4
+tags: []
+user_id: etmco

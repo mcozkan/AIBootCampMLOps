@@ -1,15 +1,19 @@
 from sklearn.cluster import DBSCAN
 import importlib
+import numpy as np
 import mlflow
+import mlflow.sklearn
 import matplotlib.pyplot as plt
-
+import datetime
+import os
+import pickle
 
 def modeling_data_dbscan():
     with mlflow.start_run(run_name = "modeling_data_dbscan"):
         start_func = datetime.datetime.now()
         # DBSCAN
         preprocess = importlib.import_module('2_preprocess_data')
-        X_scaled = preprocess.X_scaled
+        X_scaled, X, y = preprocess.preprocess_data()
 
 
         from sklearn.neighbors import NearestNeighbors
@@ -39,19 +43,19 @@ def modeling_data_dbscan():
         os.makedirs(models_dir, exist_ok = True)
 
         with open(f'{models_dir}/dbscan_model.pkl', 'wb') as f:
-            pickle.dumb(dbscan, f)
+            pickle.dump(dbscan, f)
 
-        mflows.log_artifact(f'{models_dir}/dbscan_model.pkl')
+        mlflow.log_artifact(f'{models_dir}/dbscan_model.pkl')
 
 
-        ########### MLflow main#########
+        ########### MLflow main #########
 
         # hyperparameters :
         mlflow.log_param('eps_value', 1.5)
         mlflow.log_param('min_samples', 5)
 
         # metrics:
-        mlflow.log_metric('n_outliers', int(db_preds.sum())
+        mlflow.log_metric('n_outliers', int(db_preds.sum()))
         mlflow.log_metric('outlier_percentage', db_preds.mean() * 100)
 
         # model:
@@ -60,13 +64,14 @@ def modeling_data_dbscan():
 
         # Execution time:
         end_func = datetime.datetime.now()
-        mlflow.log_metric("execution_time_seconds_dbscan_model", duration)
+        duration = end_func - start_func 
+        mlflow.log_metric("execution_time_seconds_dbscan_model", duration.total_seconds())
 
-        print(f"✅ Model çalışma süresi: {duration:.2f} saniye")
+        print(f"✅ Model çalışma süresi: {duration.total_seconds():.2f} saniye")
         print(f"✅ Tespit edilen outlier sayısı: {db_preds.sum()}")
         print(f"✅ Modeller kaydedildi: {models_dir}/")
 
         return db_preds
 
-    if __name__=="__main__":
-        modeling_data_dbscan()
+if __name__=="__main__":
+    modeling_data_dbscan()
